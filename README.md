@@ -10,4 +10,7 @@ root# source ./gen-vars.sh
 ```
 
 After that, run all the docker using docker-compose:
-`root# docker-compose up`
+```sh
+root# docker-compose up
+```
+
