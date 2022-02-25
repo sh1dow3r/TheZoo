@@ -1,0 +1,6 @@
+[submodule "mwdb-core"]
+	path = mwdb-core
+	url = https://github.com/CERT-Polska/mwdb-core
+[submodule "karton"]
+	path = karton
+	url = https://github.com/CERT-Polska/karton
