@@ -1,6 +1,9 @@
 # Docker Compose file for TheZoo 
 version: "3.3"
 services:
+#############################
+#  Minio Storage container #
+############################
   minio:
     image: minio/minio
     command: server /data
@@ -10,9 +13,27 @@ services:
       - "0.0.0.0:9000:9000"
     env_file:
       - mwdb-vars.env
+#############################
+#  Redis container         #
+############################
+  redis:
+    image: redis:alpine
+
+#############################
+#  Postgres DB container    #
+############################
+  postgres:
+    image: postgres
+    restart: always
+    env_file:
+      # NOTE: use gen_vars.sh in order to generate this file
+      - mwdb-vars.env
+#############################
+#   MWDB-core container    #
+############################
   mwdb:
     build:
-      context: .
+      context: ./mwdb-core
       dockerfile: deploy/docker/Dockerfile
     depends_on:
       - postgres
@@ -25,11 +46,14 @@ services:
     volumes:
       - "./TheZoo/mwdb/mail_templates:/app/mail_templates"
       - "./TheZoo/mwdb/app:/app/mwdb"
+#############################
+#   MWDB-web container     #
+############################
   mwdb-web:
     depends_on:
       - mwdb
     build:
-      context: .
+      context: ./mwdb-core
       dockerfile: deploy/docker/Dockerfile-web-dev
     ports:
       - "9090:9090"
@@ -37,56 +61,4 @@ services:
       - "./TheZoo/mwdb/public:/app/public"
       - "./TheZoo/mwdb/src:/app/src"
     restart: on-failure
-  postgres:
-    image: postgres
-    restart: always
-    env_file:
-      # NOTE: use gen_vars.sh in order to generate this file
-      - mwdb-vars.env
-  karton-system:
-    build:
-      context: ./karton
-      dockerfile: Dockerfile
-    #image: certpl/karton-system:158d07960d8cd39dee8771af719f560df93b3212
-    depends_on:
-      - redis
-      - minio
-    volumes:
-      - "./TheZoo/karton/karton.ini:/etc/karton/karton.ini"
-    entrypoint: karton-system
-    command: --setup-bucket
-
-  karton-classifier:
-    build:
-      context: karton_plugins/karton-classifier
-      dockerfile: Dockerfile 
-    #image: certpl/karton-classifier:320c99de8e05ff3d029609e73ac31bcf2d0ba56c
-    depends_on:
-      - redis
-      - minio
-    volumes:
-      - "./TheZoo/karton.ini:/etc/karton/karton.ini"
-
-  karton-dashboard:
-    build:
-      context: karton_plugins/karton-dashboard
-      dockerfile: Dockerfile 
-    #image: certpl/karton-dashboard:2c35fb3cae399dba8913f8ad1be9dd6b820b1fd6
-    depends_on:
-      - redis
-      - minio
-    volumes:
-      - "./TheZoo/karton.ini:/etc/karton/karton.ini"
-    ports:
-      - "0.0.0.0:8080:5000"
-
-  karton-mwdb-reporter:
-    build:
-      context: ./karton_plugins/karton-dashboard
-      dockerfile: Dockerfile 
-    depends_on:
-      - redis
-      - minio
-    volumes:
-      - "./TheZoo/karton.ini:/etc/karton/karton.ini"
 
