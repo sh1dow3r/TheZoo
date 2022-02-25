@@ -1,41 +1,91 @@
-# Docker Compose file for mwdb-core production service
-
+# Docker Compose file for TheZoo 
 version: "3.3"
 services:
+  minio:
+    image: minio/minio
+    command: server /data
+    volumes:
+      - /tmp/minio:/data
+    ports:
+      - "0.0.0.0:9000:9000"
+    env_file:
+      - mwdb-vars.env
   mwdb:
     build:
-      context: ./mwdb-core
+      context: .
       dockerfile: deploy/docker/Dockerfile
     depends_on:
       - postgres
       - redis
-    image: certpl/mwdb:v2.6.0
+      - minio
     restart: on-failure
     env_file:
       # NOTE: use gen_vars.sh in order to generate this file
       - mwdb-vars.env
     volumes:
-      - ./TheZoo_volume/mwdb-uploads:/app/uploads
+      - "./TheZoo/mwdb/mail_templates:/app/mail_templates"
+      - "./TheZoo/mwdb/app:/app/mwdb"
   mwdb-web:
     depends_on:
       - mwdb
     build:
-      context: ./mwdb-core
-      dockerfile: deploy/docker/Dockerfile-web
-    image: certpl/mwdb-web:v2.6.0
+      context: .
+      dockerfile: deploy/docker/Dockerfile-web-dev
     ports:
-      - "80:80"
+      - "9090:9090"
+    volumes:
+      - "./TheZoo/mwdb/public:/app/public"
+      - "./TheZoo/mwdb/src:/app/src"
     restart: on-failure
   postgres:
     image: postgres
     restart: always
     env_file:
       # NOTE: use gen_vars.sh in order to generate this file
-      - postgres-vars.env
+      - mwdb-vars.env
+  karton-system:
+    build:
+      context: ./karton
+      dockerfile: Dockerfile
+    #image: certpl/karton-system:158d07960d8cd39dee8771af719f560df93b3212
+    depends_on:
+      - redis
+      - minio
     volumes:
-      - ./TheZoo_volume/mwdb-postgres:/var/lib/postgresql/data
-  redis:
-    image: redis:alpine
+      - "./TheZoo/karton/karton.ini:/etc/karton/karton.ini"
+    entrypoint: karton-system
+    command: --setup-bucket
 
-volumes:
-  TheZoo_volume:
+  karton-classifier:
+    build:
+      context: karton_plugins/karton-classifier
+      dockerfile: Dockerfile 
+    #image: certpl/karton-classifier:320c99de8e05ff3d029609e73ac31bcf2d0ba56c
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo/karton.ini:/etc/karton/karton.ini"
+
+  karton-dashboard:
+    build:
+      context: karton_plugins/karton-dashboard
+      dockerfile: Dockerfile 
+    #image: certpl/karton-dashboard:2c35fb3cae399dba8913f8ad1be9dd6b820b1fd6
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo/karton.ini:/etc/karton/karton.ini"
+    ports:
+      - "0.0.0.0:8080:5000"
+
+  karton-mwdb-reporter:
+    context: ./karton_plugins/karton-dashboard
+    dockerfile: Dockerfile 
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo/karton.ini:/etc/karton/karton.ini"
+

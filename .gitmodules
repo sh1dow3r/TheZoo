@@ -10,3 +10,6 @@
 [submodule "karton_plugins/karton-dashboard"]
 	path = karton_plugins/karton-dashboard
 	url = https://github.com/CERT-Polska/karton-dashboard
+[submodule "karton_plugins/karton-mwdb-reporter"]
+	path = karton_plugins/karton-mwdb-reporter
+	url = https://github.com/CERT-Polska/karton-mwdb-reporter
