@@ -4,3 +4,9 @@
 [submodule "karton"]
 	path = karton
 	url = https://github.com/CERT-Polska/karton
+[submodule "karton-dashboard"]
+	path = karton-dashboard
+	url = https://github.com/CERT-Polska/karton-dashboard
+[submodule "karton-classifier"]
+	path = karton-classifier
+	url = https://github.com/CERT-Polska/karton-classifier

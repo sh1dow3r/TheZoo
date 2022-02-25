@@ -38,5 +38,4 @@ services:
     image: redis:alpine
 
 volumes:
-  mwdb-postgres:
-  mwdb-uploads:
+  TheZoo_volume:

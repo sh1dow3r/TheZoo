@@ -3,6 +3,8 @@
 ADMIN_PASSWORD=$(od -vN 18 -An -tx1 /dev/urandom | tr -d " \n")
 POSTGRES_PASSWORD=$(od -vN 18 -An -tx1 /dev/urandom | tr -d " \n")
 SECRET_KEY=$(od -vN 18 -An -tx1 /dev/urandom | tr -d " \n")
+MINIO_ACCESS_KEY=$(od -vN 18 -An -tx1 /dev/urandom | tr -d " \n")
+MINIO_SECRET_KEY=$(od -vN 18 -An -tx1 /dev/urandom | tr -d " \n")
 
 echo "MWDB_REDIS_URI=redis://redis/" > mwdb-vars.env
 echo "MWDB_POSTGRES_URI=postgresql://mwdb:$POSTGRES_PASSWORD@postgres/mwdb" >> mwdb-vars.env
@@ -11,6 +13,14 @@ echo "MWDB_ADMIN_LOGIN=admin" >> mwdb-vars.env
 echo "MWDB_ADMIN_EMAIL=admin@localhost" >> mwdb-vars.env
 echo "MWDB_ADMIN_PASSWORD=$ADMIN_PASSWORD" >> mwdb-vars.env
 echo "MWDB_BASE_URL=http://127.0.0.1" >> mwdb-vars.env
+echo "MINIO_ACCESS_KEY=$MINIO_ACCESS_KEY" >> mwdb-vars.env
+echo "MINIO_SECRET_KEY=$MINIO_SECRET_KEY" >> mwdb-vars.env
+echo "MWDB_MAIL_SMTP=mailhog:1025"  >> mwdb-vars.env
+echo "MWDB_MAIL_FROM=noreply@mwdb.dev" >> mwdb-vars.env
+echo "MWDB_RECAPTCHA_SITE_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" >> mwdb-vars.env
+echo "MWDB_RECAPTCHA_SECRET=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe" >> mwdb-vars.env
+echo "HOST=0.0.0.0" >> mwdb-vars.env
+echo "REACT_APP_API_URL=/api/" >> mwdb-vars.env
 
 if [ "$1" != "raw" ]
 then
@@ -32,11 +42,10 @@ then
     echo "MWDB_ENABLE_RATE_LIMIT=0" >> mwdb-vars.env
 else
     echo "MWDB_ENABLE_RATE_LIMIT=1" >> mwdb-vars.env
-    echo "MWDB_ENABLE_REGISTRATION=0" >> mwdb-vars.env
+    echo "MWDB_ENABLE_REGISTRATION=1" >> mwdb-vars.env
 fi
 echo "UWSGI_PROCESSES=4" >> mwdb-vars.env
 
-echo "POSTGRES_USER=mwdb" > postgres-vars.env
-echo "POSTGRES_DB=mwdb" >> postgres-vars.env
-echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> postgres-vars.env
-
+echo "POSTGRES_USER=mwdb" >> mwdb-vars.env
+echo "POSTGRES_DB=mwdb" >> mwdb-vars.env
+echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> mwdb-vars.env
