@@ -3,8 +3,10 @@
 export ADMIN_PASSWORD=$(od -vN 18 -An -tx1 /dev/urandom | tr -d " \n")
 export POSTGRES_PASSWORD=$(od -vN 18 -An -tx1 /dev/urandom | tr -d " \n")
 export SECRET_KEY=$(od -vN 18 -An -tx1 /dev/urandom | tr -d " \n")
-export MINIO_ROOT_USER=root
-export MINIO_ROOT_PASSWORD=$(od -vN 18 -An -tx1 /dev/urandom | tr -d " \n")
+#export MINIO_ROOT_USER=root
+#export MINIO_ROOT_PASSWORD=$(od -vN 18 -An -tx1 /dev/urandom | tr -d " \n")
+export MINIO_ACCESS_KEY=$(od -vN 18 -An -tx1 /dev/urandom | tr -d " \n")
+export MINIO_SECRET_KEY=$(od -vN 18 -An -tx1 /dev/urandom | tr -d " \n")
 
 echo "MWDB_REDIS_URI=redis://redis/" > mwdb-vars.env
 echo "MWDB_POSTGRES_URI=postgresql://mwdb:$POSTGRES_PASSWORD@postgres/mwdb" >> mwdb-vars.env
