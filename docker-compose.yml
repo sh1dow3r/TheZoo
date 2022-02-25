@@ -64,3 +64,19 @@ services:
       - "./TheZoo_volume/mwdb/src:/app/src"
     restart: on-failure
 
+#############################
+#  karton engine container #
+############################
+  karton-system:
+    build:
+      context: ./karton
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo/karton/karton.ini:/etc/karton/karton.ini"
+    entrypoint: karton-system
+    command: --setup-bucket
+
+
