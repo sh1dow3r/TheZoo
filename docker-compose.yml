@@ -81,8 +81,9 @@ services:
       - "0.0.0.0:8080:5000"
 
   karton-mwdb-reporter:
-    context: ./karton_plugins/karton-dashboard
-    dockerfile: Dockerfile 
+    build:
+      context: ./karton_plugins/karton-dashboard
+      dockerfile: Dockerfile 
     depends_on:
       - redis
       - minio
