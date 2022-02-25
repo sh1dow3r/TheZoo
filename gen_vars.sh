@@ -36,6 +36,7 @@ else
 fi
 echo "UWSGI_PROCESSES=4" >> mwdb-vars.env
 
-echo "POSTGRES_USER=mwdb" >> mwdb-vars.env
-echo "POSTGRES_DB=mwdb" >> mwdb-vars.env
-echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> mwdb-vars.env
+echo "POSTGRES_USER=mwdb" > postgres-vars.env
+echo "POSTGRES_DB=mwdb" >> postgres-vars.env
+echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> postgres-vars.env
+

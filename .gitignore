@@ -131,4 +131,5 @@ dmypy.json
 
 ### TheZoo stuff
 mwdb-vars.env
+postgres-vars.env
 TheZoo_volume
