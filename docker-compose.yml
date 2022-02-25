@@ -1,5 +1,11 @@
 # Docker Compose file for TheZoo 
 version: "3.3"
+# service                 Exposed Port        Volumes
+# MWDB-Core                 8000                TBD 
+# Redis                     8379                TBD
+# minio                   9000,9001             TBD
+# karton-dashboard          8080                TBD
+
 services:
 #############################
 #  Minio Storage container #
@@ -98,7 +104,7 @@ services:
     command: --setup-bucket
 
 #################################
-#karton classifier container   #
+# karton classifier container  #
 ################################
   karton-classifier:
     build:
@@ -111,7 +117,7 @@ services:
       - "./TheZoo_volume/karton.ini:/etc/karton/karton.ini"
 
 #################################
-#   karton dashboard container #
+#  karton dashboard container  #
 ################################
   karton-dashboard:
     build:
@@ -126,7 +132,7 @@ services:
       - "0.0.0.0:8080:5000"
 
 #################################
-#karton reporter container     #
+#  karton reporter container   #
 ################################
   karton-mwdb-reporter:
     build:
