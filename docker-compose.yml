@@ -2,8 +2,8 @@
 version: "3.3"
 # service                 Exposed Port        Volumes
 # MWDB-Core                 8000                TBD 
-# Redis                     8379                TBD
-# minio                   9000,9001             TBD
+# minio                   8010,9020             TBD
+# Redis                     8030                TBD
 # karton-dashboard          8080                TBD
 
 services:
@@ -16,8 +16,8 @@ services:
     volumes:
       - /tmp/minio:/data
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "8010:9000"
+      - "8020:9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -32,7 +32,7 @@ services:
   redis:
     image: redis:alpine
     ports:
-      - "8379:6379"
+      - "8030:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 1s
@@ -69,6 +69,8 @@ services:
       # NOTE: use gen_vars.sh in order to generate this file
       - mwdb-vars.env
     volumes:
+      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
+      - "./TheZoo_volume/karton/mwdb.ini:/app/mwdb.ini"
       - "./TheZoo_volume/mwdb/mail_templates:/app/mail_templates"
       - "./TheZoo_volume/mwdb/app:/app/mwdb"
 
@@ -99,7 +101,7 @@ services:
       - redis
       - minio
     volumes:
-      - "./TheZoo_volume/karton/:/etc/karton/karton.ini"
+      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
     entrypoint: karton-system
     command: --setup-bucket
 
@@ -114,7 +116,7 @@ services:
       - redis
       - minio
     volumes:
-      - "./TheZoo_volume/karton.ini:/etc/karton/karton.ini"
+      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
 #################################
 #  karton dashboard container  #
@@ -127,7 +129,7 @@ services:
       - redis
       - minio
     volumes:
-      - "./TheZoo_volume/karton.ini:/etc/karton/karton.ini"
+      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
     ports:
       - "0.0.0.0:8080:5000"
 
@@ -142,5 +144,4 @@ services:
       - redis
       - minio
     volumes:
-      - "./TheZoo_volume/karton.ini:/etc/karton/karton.ini"
-
+      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
