@@ -1,0 +1,55 @@
+{% extends 'queue_layout.html' %}
+{% block tasks %}
+<h4>Tasks
+  {% if queue.pending_tasks %}
+  <div class="btn-group float-right">
+    <form action={{url_for("cancel_pending_queue_tasks", queue_name=name)}} method="POST" id="cancelQueue">
+      <button class="btn btn-sm btn-secondary" type="submit" form="cancelQueue" value="Submit" title="cancel all tasks">Cancel all</button>
+    </form>  
+  </div> 
+{% endif %}
+</h4>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">task</th>
+      <th scope="col">headers</th>
+      <th scope="col">actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for task in queue.pending_tasks|sort(attribute='last_update', reverse=True) %}
+    <tr>
+      <td>
+        <a href="/task/{{task.uid}}">{{ task.uid }}</a>
+      </td>
+      <td>
+        {% if task.priority != 'normal' %}
+        <span class="badge badge-dark">{{task.priority}}</span>
+        {% endif %}
+        <span class="badge badge-light">{{task.status}}</span>
+        {% for hdrname, hdrval in task.headers.items() %}
+        {% if hdrname == 'type' %}
+        <span class="badge badge-primary">{{hdrname}}:{{hdrval}}</span>
+        {% elif hdrname == 'kind' %}
+        <span class="badge badge-info">{{hdrname}}:{{hdrval}}</span>
+        {% elif hdrname == 'stage' %}
+        <span class="badge badge-success">{{hdrname}}:{{hdrval}}</span>
+        {% elif hdrname == 'receiver' %}
+        {% else %}
+        <span class="badge badge-secondary">{{hdrname}}:{{hdrval}}</span>
+        {% endif %}
+        {% endfor %}
+      </td>
+      <td>
+        <div class="btn-group">
+          <form action={{url_for("cancel_task", task_id=task.uid)}} method="POST">
+            <button class="btn btn-dark" type="submit" value="Submit" title="cancel task">✕</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
