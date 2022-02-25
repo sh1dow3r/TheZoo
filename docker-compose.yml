@@ -10,14 +10,28 @@ services:
     volumes:
       - /tmp/minio:/data
     ports:
-      - "0.0.0.0:9000:9000"
+      - "9000:9000"
+      - "9001:9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3 
     env_file:
       - mwdb-vars.env
+
 #############################
 #  Redis container         #
 ############################
   redis:
     image: redis:alpine
+    ports:
+      - "8379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
 
 #############################
 #  Postgres DB container    #
@@ -26,8 +40,12 @@ services:
     image: postgres
     restart: always
     env_file:
-      # NOTE: use gen_vars.sh in order to generate this file
       - mwdb-vars.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 #############################
 #   MWDB-core container    #
@@ -75,8 +93,48 @@ services:
       - redis
       - minio
     volumes:
-      - "./TheZoo/karton/karton.ini:/etc/karton/karton.ini"
+      - "./TheZoo_volume/karton/:/etc/karton/karton.ini"
     entrypoint: karton-system
     command: --setup-bucket
 
+#################################
+#karton classifier container   #
+################################
+  karton-classifier:
+    build:
+      context: karton_plugins/karton-classifier
+      dockerfile: Dockerfile 
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo_volume/karton.ini:/etc/karton/karton.ini"
+
+#################################
+#   karton dashboard container #
+################################
+  karton-dashboard:
+    build:
+      context: karton_plugins/karton-dashboard
+      dockerfile: Dockerfile 
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo_volume/karton.ini:/etc/karton/karton.ini"
+    ports:
+      - "0.0.0.0:8080:5000"
+
+#################################
+#karton reporter container     #
+################################
+  karton-mwdb-reporter:
+    build:
+      context: ./karton_plugins/karton-dashboard
+      dockerfile: Dockerfile 
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo_volume/karton.ini:/etc/karton/karton.ini"
 
