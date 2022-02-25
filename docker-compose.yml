@@ -28,6 +28,7 @@ services:
     env_file:
       # NOTE: use gen_vars.sh in order to generate this file
       - mwdb-vars.env
+
 #############################
 #   MWDB-core container    #
 ############################
@@ -44,8 +45,9 @@ services:
       # NOTE: use gen_vars.sh in order to generate this file
       - mwdb-vars.env
     volumes:
-      - "./TheZoo/mwdb/mail_templates:/app/mail_templates"
-      - "./TheZoo/mwdb/app:/app/mwdb"
+      - "./TheZoo_volume/mwdb/mail_templates:/app/mail_templates"
+      - "./TheZoo_volume/mwdb/app:/app/mwdb"
+
 #############################
 #   MWDB-web container     #
 ############################
@@ -54,11 +56,11 @@ services:
       - mwdb
     build:
       context: ./mwdb-core
-      dockerfile: deploy/docker/Dockerfile-web-dev
+      dockerfile: deploy/docker/Dockerfile-web
     ports:
-      - "9090:9090"
+      - "0.0.0.0:8000:80"
     volumes:
-      - "./TheZoo/mwdb/public:/app/public"
-      - "./TheZoo/mwdb/src:/app/src"
+      - "./TheZoo_volume/mwdb/public:/app/public"
+      - "./TheZoo_volume/mwdb/src:/app/src"
     restart: on-failure
 
