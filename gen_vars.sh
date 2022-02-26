@@ -52,4 +52,5 @@ echo "POSTGRES_USER=mwdb" >> mwdb-vars.env
 echo "POSTGRES_DB=mwdb" >> mwdb-vars.env
 echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> mwdb-vars.env
 
-echo "itsdangerous==2.0.1" >> ./TheZoo/karton_plugins/karton-dashboard/requirements.txt
+echo "itsdangerous==2.0.1" >> ./karton_plugins/karton-dashboard/requirements.txt
+echo "itsdangerous==2.0.1" >> ./karton_plugins/karton-mwdb-reporter/requirements.txt
