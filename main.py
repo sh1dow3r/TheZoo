@@ -17,11 +17,11 @@ def write_line(file,key,val):
     pass
 
 def setup_mwdb_vars():
-    ADMIN_PASSWORD=repr(password_gen(32))
-    SECRET_KEY=repr(password_gen(32))
-    POSTGRES_PASSWORD=repr(password_gen(32))
-    MINIO_ACCESS_KEY=repr(password_gen(32))
-    MINIO_SECRET_KEY=repr(password_gen(32))
+    ADMIN_PASSWORD=password_gen(32)
+    SECRET_KEY=password_gen(32)
+    POSTGRES_PASSWORD=password_gen(32)
+    MINIO_ACCESS_KEY=password_gen(32)
+    MINIO_SECRET_KEY=password_gen(32)
     #MINIO_ROOT_USER=root
     #MINIO_ROOT_PASSWORD=
     filename = "mwdb-vars.env"
@@ -30,11 +30,13 @@ def setup_mwdb_vars():
     mwdb_vars_setup="MWDB_ADMIN_LOGIN=admin\n\
 ADMIN_PASSWORD={}\n\
 SECRET_KEY={}\n\
+POSTGRES_USER=mwdb\n\
+POSTGRES_DB=mwdb\n\
 POSTGRES_PASSWORD={}\n\
 MINIO_ACCESS_KEY={}\n\
 MINIO_SECRET_KEY={}\n\
 MWDB_REDIS_URI=redis://redis/\n\
-MWDB_POSTGRES_URI=postgresql://mwdb:{}@postgres/mwdb".format(ADMIN_PASSWORD,SECRET_KEY,POSTGRES_PASSWORD,MINIO_ACCESS_KEY,MINIO_SECRET_KEY,POSTGRES_PASSWORD)
+MWDB_POSTGRES_URI=postgresql://mwdb:{}@postgres/mwdb\n".format(ADMIN_PASSWORD,SECRET_KEY,POSTGRES_PASSWORD,MINIO_ACCESS_KEY,MINIO_SECRET_KEY,POSTGRES_PASSWORD)
 
     mwdb_opt_vars_setup="MWDB_BASE_URL=http://127.0.0.1\n\
 MWDB_ADMIN_EMAIL=admin@localhost\n\
@@ -43,16 +45,11 @@ MWDB_MAIL_SMTP=localhost:25\n\
 MWDB_MAIL_FROM=noreply@mwdb.dev\n\
 MWDB_RECAPTCHA_SITE_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI\n\
 MWDB_RECAPTCHA_SECRET=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe\n\
-MINIO_ACCESS_KEY={}\n\
-MINIO_SECRET_KEY={}\n\
 UWSGI_PROCESSES=4\n\
-POSTGRES_USER=mwdb\n\
-POSTGRES_DB=mwdb\n\
-POSTGRES_PASSWORD={}\n\
 MWDB_ENABLE_RATE_LIMIT=1\n\
 MWDB_ENABLE_REGISTRATION=1\n\
 REACT_APP_API_URL=/api/\n\
-HOST=0.0.0.0".format(ADMIN_PASSWORD,MINIO_ACCESS_KEY,MINIO_SECRET_KEY,POSTGRES_PASSWORD)
+HOST=0.0.0.0"
     fd.write(mwdb_vars_setup)
     fd.write(mwdb_opt_vars_setup)
     fd.close()
@@ -81,6 +78,7 @@ HOST=0.0.0.0".format(ADMIN_PASSWORD,MINIO_ACCESS_KEY,MINIO_SECRET_KEY,POSTGRES_P
     
 def setup_ini_file(ini_file, section, key, val):
     config = configparser.ConfigParser()
+    config.read(ini_file)
     config.set(section,key,val) 
     with open(ini_file, 'w') as configfile:
         config.write(configfile)
