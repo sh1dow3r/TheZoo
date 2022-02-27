@@ -138,7 +138,7 @@ services:
 ################################
   karton-mwdb-reporter:
     build:
-      context: ./karton_plugins/karton-dashboard
+      context: ./karton_plugins/karton-mwdb-reporter
       dockerfile: Dockerfile 
     depends_on:
       - redis
