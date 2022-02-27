@@ -58,10 +58,10 @@ HOST=0.0.0.0"
     deb = "itsdangerous==2.0.1 "
     karton_dashboard = "./karton_plugins/karton-dashboard/requirements.txt"
     karton_reporter = "./karton_plugins/karton-mwdb-reporter/requirements.txt"
-    fd = open(karton_dashboard ,"w")
+    fd = open(karton_dashboard ,"a")
     fd.write(deb)
     fd.close()
-    fd = open(karton_reporter ,"w")
+    fd = open(karton_reporter ,"a")
     fd.write(deb)
     fd.close()
     
