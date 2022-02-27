@@ -17,11 +17,11 @@ def write_line(file,key,val):
     pass
 
 def setup_mwdb_vars():
-    ADMIN_PASSWORD=password_gen(32)
-    SECRET_KEY=password_gen(32)
-    POSTGRES_PASSWORD=password_gen(32)
-    MINIO_ACCESS_KEY=password_gen(32)
-    MINIO_SECRET_KEY=password_gen(32)
+    ADMIN_PASSWORD=password_gen(18)
+    SECRET_KEY=password_gen(18)
+    POSTGRES_PASSWORD=password_gen(18)
+    MINIO_ACCESS_KEY=password_gen(18)
+    MINIO_SECRET_KEY=password_gen(18)
     #MINIO_ROOT_USER=root
     #MINIO_ROOT_PASSWORD=
     filename = "mwdb-vars.env"
@@ -36,9 +36,9 @@ POSTGRES_PASSWORD={}\n\
 MINIO_ACCESS_KEY={}\n\
 MINIO_SECRET_KEY={}\n\
 MWDB_REDIS_URI=redis://redis/\n\
-MWDB_POSTGRES_URI=postgresql://mwdb:{}@postgres/mwdb\n".format(ADMIN_PASSWORD,SECRET_KEY,POSTGRES_PASSWORD,MINIO_ACCESS_KEY,MINIO_SECRET_KEY,POSTGRES_PASSWORD)
+MWDB_POSTGRES_URI=postgresql://mwdb:{}@postgres/mwdb".format(ADMIN_PASSWORD,SECRET_KEY,POSTGRES_PASSWORD,MINIO_ACCESS_KEY,MINIO_SECRET_KEY,POSTGRES_PASSWORD)
 
-    mwdb_opt_vars_setup="MWDB_BASE_URL=http://127.0.0.1\n\
+    mwdb_opt_vars_setup="\nMWDB_BASE_URL=http://127.0.0.1\n\
 MWDB_ADMIN_EMAIL=admin@localhost\n\
 MWDB_BASE_URL=http://127.0.0.1\n\
 MWDB_MAIL_SMTP=localhost:25\n\
