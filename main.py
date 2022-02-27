@@ -17,19 +17,19 @@ def write_line(file,key,val):
     pass
 
 def setup_mwdb_vars():
-    ADMIN_PASSWORD=password_gen(18)
-    SECRET_KEY=password_gen(18)
-    POSTGRES_PASSWORD=password_gen(18)
-    MINIO_ACCESS_KEY=password_gen(18)
-    MINIO_SECRET_KEY=password_gen(18)
+    ADMIN_PASSWORD=password_gen(25)
+    SECRET_KEY=password_gen(25)
+    POSTGRES_PASSWORD=password_gen(25)
+    MINIO_ACCESS_KEY=password_gen(25)
+    MINIO_SECRET_KEY=password_gen(25)
     #MINIO_ROOT_USER=root
     #MINIO_ROOT_PASSWORD=
     filename = "mwdb-vars.env"
     fd = open(filename ,"w")
     fd.truncate() #flush content before writing
     mwdb_vars_setup="MWDB_ADMIN_LOGIN=admin\n\
-ADMIN_PASSWORD={}\n\
-SECRET_KEY={}\n\
+MWDB_ADMIN_PASSWORD={}\n\
+MWDB_SECRET_KEY={}\n\
 POSTGRES_USER=mwdb\n\
 POSTGRES_DB=mwdb\n\
 POSTGRES_PASSWORD={}\n\
@@ -55,7 +55,7 @@ HOST=0.0.0.0"
     fd.close()
 
     #install dependencies 
-    deb = "itsdangerous==2.0.1 "
+    deb = "itsdangerous==2.0.1\n"
     karton_dashboard = "./karton_plugins/karton-dashboard/requirements.txt"
     karton_reporter = "./karton_plugins/karton-mwdb-reporter/requirements.txt"
     fd = open(karton_dashboard ,"a")
