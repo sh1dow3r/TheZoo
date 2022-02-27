@@ -9,11 +9,12 @@ root# git clone https://github.com/sh1dow3r/TheZoo --recursive
 ```
 Run the following command:
 ```sh
-root# chmod +x gen-vars.sh
-root# source ./gen-vars.sh
+root# python3 main.py 
 ```
 
-After that, run all the docker using docker-compose:
+Review the project configuration at `./mwdb-vars.env` file.
+
+After that, run all the docker container using docker-compose:
 ```sh
 root# docker-compose up
 ```
