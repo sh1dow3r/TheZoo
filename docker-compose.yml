@@ -83,7 +83,7 @@ services:
       context: ./mwdb-core
       dockerfile: deploy/docker/Dockerfile-web
     ports:
-      - "0.0.0.0:8000:80"
+      - "0.0.0.0:8080:80"
     volumes:
       - "./TheZoo_volume/mwdb/public:/app/public"
       - "./TheZoo_volume/mwdb/src:/app/src"
@@ -130,7 +130,7 @@ services:
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
     ports:
-      - "0.0.0.0:8080:5000"
+      - "0.0.0.0:8000:5000"
 
 #################################
 #  karton reporter container   #
