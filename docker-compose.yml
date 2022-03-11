@@ -144,3 +144,31 @@ services:
       - minio
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
+
+#################################
+#  karton strings container   #
+################################
+  karton-mwdb-strings:
+    build:
+      context: ./karton_plugins/karton-mwdb-strings
+      dockerfile: Dockerfile 
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
+
+#################################
+#  karton floss container   #
+################################
+  karton-mwdb-floss:
+    build:
+      context: ./karton_plugins/karton-mwdb-floss
+      dockerfile: Dockerfile 
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
+
+
