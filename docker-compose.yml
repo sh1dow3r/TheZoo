@@ -11,13 +11,15 @@ services:
 #  Minio Storage container #
 ############################
   minio:
-    image: minio/minio
+    image: minio/minio:latest
     command: server /data --console-address ":9001"
     volumes:
-      - /tmp/minio:/data
+      - "./TheZoo_volume/samples/:/data"
     ports:
       - "9000:9000"
       - "9001:9001"
+    environment:
+      MINIO_HTTP_TRACE: /dev/stdout
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -48,7 +50,7 @@ services:
     env_file:
       - mwdb-vars.env
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: ["CMD-SHELL", "pg_isready -U mwdb"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -146,7 +148,7 @@ services:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
 #################################
-#  karton strings container   #
+#  karton strings container    #
 ################################
   karton-mwdb-strings:
     build:
@@ -159,7 +161,7 @@ services:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
 #################################
-#  karton floss container   #
+#    karton floss container    #
 ################################
   karton-mwdb-floss:
     build:
@@ -171,4 +173,16 @@ services:
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
+#################################
+#   karton capa container      #
+################################
+  karton-mwdb-capa:
+    build:
+      context: ./karton_plugins/karton-mwdb-capa
+      dockerfile: Dockerfile 
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
