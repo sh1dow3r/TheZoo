@@ -13,7 +13,7 @@ class Strings(Karton):
     def process(self, task: Task) -> None:
         # Get the incoming sample
         sample_resource = task.get_resource("sample")
-
+        sample_name = sample_resource.name + " strings" 
         # Log with self.log
         self.log.info(f"Hi {sample_resource.name}, let me analyse you!")
 
@@ -25,8 +25,9 @@ class Strings(Karton):
         # Send our results for further processing or reporting
         task = Task(
             {"type": "sample", "stage": "analyzed"},
-            payload={"parent": sample_resource, "sample": Resource("string", strings)},
+            payload={"parent": sample_resource, "sample": Resource(sample_name, strings)},
         )
+        task.add_payload("tags", ["karton:strings"])
         self.send_task(task)
 
 
