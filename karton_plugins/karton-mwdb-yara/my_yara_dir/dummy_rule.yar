@@ -1,6 +1,0 @@
-rule dummy
-{
-    condition:
-       false
-}
-
