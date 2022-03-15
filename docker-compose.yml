@@ -198,4 +198,4 @@ services:
       - minio
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
-
+      - "./TheZoo_volume/yara_rules:/app/service/"
