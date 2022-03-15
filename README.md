@@ -19,3 +19,6 @@ After that, run all the docker container using docker-compose:
 root# docker-compose up
 ```
 
+# Blog Post
+
+https://layer0.xyz/incident/response,/malware/analysis,/automation/2022/03/13/Automated_Approach_for_Malware_Collection_and_Analysis/
