@@ -133,3 +133,4 @@ dmypy.json
 mwdb-vars.env
 postgres-vars.env
 TheZoo_volume/mwdb
+TheZoo_volume/
