@@ -132,4 +132,8 @@ dmypy.json
 ### TheZoo stuff
 mwdb-vars.env
 postgres-vars.env
-TheZoo_volume/
+TheZoo_volume/mwdb
+TheZoo_volume/karton
+TheZoo_volume/samples
+./karton_plugins/karton-dashboard/
+./karton_plugins/karton-mwdb-reporter/
