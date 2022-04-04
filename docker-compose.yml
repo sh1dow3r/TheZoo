@@ -199,3 +199,85 @@ services:
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
       - "./TheZoo_volume/yara_rules:/app/service/"
+
+#################################
+# karton aurora container       #
+################################
+  aurora:
+      build:
+        context: ./karton_plugins/karton-aurora
+        dockerfile: Dockerfile
+      env_file:
+        - mwdb-vars.env
+      depends_on:
+        - postgres
+      ports:
+        - "80:80"
+      restart: on-failure
+
+
+#################################
+# karton minihash container    #
+################################
+  karton-minhash:
+      build:
+        context: ./karton_plugins/karton-minhash/
+        dockerfile: Dockerfile
+      depends_on:
+        - redis
+        - minio
+      volumes:
+        - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
+
+#################################
+# karton r2disasm container     #
+################################
+  karton-r2disasm:
+    build:
+      context: ./karton_plugins/karton-r2disasm
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
+
+#################################
+# karton similarity container   #
+################################
+  karton-similarity:
+    restart: on-failure
+    build:
+      context: ./karton_plugins/karton-similarity/
+      dockerfile: Dockerfile
+    depends_on:
+      - aurora
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
+
+#################################
+# karton similarity container   #
+################################
+  karton-strings-extractor:
+    build:
+      context: ./karton_plugins/karton-strings-extractor/
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
+#################################
+#karton string-scanner container#
+################################
+  karton-strings-scanner:
+    build:
+      context: ./karton_plugins/karton-strings-scanner/
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
