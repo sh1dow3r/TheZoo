@@ -55,15 +55,15 @@ HOST=0.0.0.0"
     fd.close()
 
     #install dependencies 
-    deb = "itsdangerous==2.0.1\n"
-    karton_dashboard = "./karton_plugins/karton-dashboard/requirements.txt"
-    karton_reporter = "./karton_plugins/karton-mwdb-reporter/requirements.txt"
-    fd = open(karton_dashboard ,"a")
-    fd.write(deb)
-    fd.close()
-    fd = open(karton_reporter ,"a")
-    fd.write(deb)
-    fd.close()
+    #deb = "itsdangerous==2.0.1\n"
+    #karton_dashboard = "./karton_plugins/karton-dashboard/requirements.txt"
+    #karton_reporter = "./karton_plugins/karton-mwdb-reporter/requirements.txt"
+    #fd = open(karton_dashboard ,"a")
+    #fd.write(deb)
+    #fd.close()
+    #fd = open(karton_reporter ,"a")
+    #fd.write(deb)
+    #fd.close()
     
     #setup ini for karton and mwdb-core communitcation
     karton_ini = "./TheZoo_volume/karton/karton.ini" 
