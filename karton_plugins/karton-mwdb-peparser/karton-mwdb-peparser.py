@@ -22,6 +22,8 @@ class PEParser(Karton):
         with sample_resource.download_temporary_file() as sample_file:
             # And run `PEparser` on it
             PE_data = subprocess.check_output(["python3", "PEParser.py", sample_file.name])
+            if PE_data.find("File is not a PE"):
+                return
 
         # Send our results for further processing or reporting
         task = Task(
