@@ -192,9 +192,11 @@ f=open(PEInput, 'rb')
 if f.read(2) == b'MZ':
   tempPE=pereader.PE(PEInput)
   print(createJSON(tempPE))
-
+f.close()
 else:
   print("File is not a PE")
+  return -1
+  
 
-f.close()
+
 
