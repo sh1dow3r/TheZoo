@@ -13,3 +13,6 @@
 [submodule "karton_plugins/karton-mwdb-reporter"]
 	path = karton_plugins/karton-mwdb-reporter
 	url = https://github.com/CERT-Polska/karton-mwdb-reporter
+[submodule "karton_plugins/aurora"]
+	path = karton_plugins/aurora
+	url = https://github.com/W3ndige/aurora
