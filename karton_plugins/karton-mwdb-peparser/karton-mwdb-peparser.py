@@ -23,7 +23,8 @@ class PEParser(Karton):
             # And run `PEparser` on it
             PE_data = subprocess.check_output(["python3", "PEParser.py", sample_file.name])
             PE_data = PE_data.decode("utf-8")
-            if PE_data.find("File is not a PE"):
+            cond = PE_data.find("File is not a PE")
+            if cond == 0:
                 return
 
         # Send our results for further processing or reporting
