@@ -212,4 +212,17 @@ services:
       - minio
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
+      
+ #################################
+#  karton retdec container    #
+################################
+  karton-retdec-decompiler:
+    build:
+      context: ./karton_plugins/karton-retdec-decompiler
+      dockerfile: Dockerfile 
+    depends_on:
+      - redis
+      - minio
+    volumes:
+      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
