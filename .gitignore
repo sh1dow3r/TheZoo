@@ -133,6 +133,8 @@ dmypy.json
 mwdb-vars.env
 postgres-vars.env
 ./TheZoo_volume/*
+TheZoo_volume
+./TheZoo_volume/
 ./TheZoo_volume/karton/karton.ini 
 ./TheZoo_volume/karton/mwdb.ini
 ./TheZoo_volume/samples
