@@ -39,5 +39,6 @@ RUN git clone https://github.com/avast/retdec && \
 ENV PATH /home/retdec/retdec-install/bin:$PATH
 COPY ./requirements.txt ./requirements.txt
 COPY ./karton-retdec-decompiler.py ./karton-retdec-decompiler.py
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python3 -m venv /app/venv
+RUN /app/venv/bin/pip --no-cache-dir install -r /app/requirements.txt
 CMD [ "python3" , "karton-retdec-decompiler.py" ]

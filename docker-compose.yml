@@ -1,5 +1,4 @@
 # Docker Compose file for TheZoo 
-version: "3.3"
 # service                 Exposed Port        Volumes
 # MWDB-Core                 8080                TBD 
 # minio                   9001,9000             TBD
@@ -186,19 +185,19 @@ services:
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
-#################################
-# karton yaraMatcher container #
-################################
-  karton-mwdb-yara_matcher:
-    build:
-      context: ./karton_plugins/karton-mwdb-yara
-      dockerfile: Dockerfile 
-    depends_on:
-      - redis
-      - minio
-    volumes:
-      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
-      - "./TheZoo_volume/yara_rules:/app/service/"
+# #################################
+# # karton yaraMatcher container #
+# ################################
+#   karton-mwdb-yara_matcher:
+#     build:
+#       context: ./karton_plugins/karton-mwdb-yara
+#       dockerfile: Dockerfile 
+#     depends_on:
+#       - redis
+#       - minio
+#     volumes:
+#       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
+#       - "./TheZoo_volume/yara_rules:/app/service/"
 
 ################################
 #  karton pe parser container    #
