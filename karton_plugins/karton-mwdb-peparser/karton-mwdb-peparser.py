@@ -1,41 +1,35 @@
 from karton.core import Karton, Task, Resource
-import subprocess
+from peparser_lib import parse_pe_file
+import json
 
 
 class PEParser(Karton):
-    """
-    Runs the `PEParser` utility on incoming samples
-    """
-
-    identity = "karton.PEParser"
+    identity = "karton.peparser"
     filters = [{"type": "sample", "stage": "recognized"}]
 
     def process(self, task: Task) -> None:
-        # Get the incoming sample
         sample_resource = task.get_resource("sample")
         sample_name = sample_resource.name + " PE_Parser"
 
-        # Log with self.log
         self.log.info(f"Hi {sample_resource.name}, let me parse you!")
 
-        # Download the resource to a temporary file
         with sample_resource.download_temporary_file() as sample_file:
-            # And run `PEparser` on it
-            PE_data = subprocess.check_output(["python3", "PEParser.py", sample_file.name])
-            PE_data = PE_data.decode("utf-8")
-            cond = PE_data.find("File is not a PE")
-            if cond == 0:
-                return
+            result = parse_pe_file(sample_file.name)
 
-        # Send our results for further processing or reporting
+        if "error" in result:
+            self.log.warning(f"{sample_resource.name} is not a valid PE")
+            return
+
         task = Task(
             {"type": "sample", "stage": "analyzed"},
-            payload={"parent": sample_resource, "sample": Resource(sample_name, PE_data)},
+            payload={
+                "parent": sample_resource,
+                "metadata": result
+            }
         )
-        task.add_payload("tags", ["karton:PE_Parser"])
+        task.add_payload("tags", ["karton:peparser"])
         self.send_task(task)
 
 
 if __name__ == "__main__":
-    # Here comes the main loop
     PEParser().loop()

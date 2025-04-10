@@ -12,22 +12,18 @@ FROM python:3.12-alpine
 LABEL maintainer="0xalamri@layer0.xyz"
 
 # Install system dependencies
-RUN apk add --no-cache git
+RUN apk add --no-cache git build-base libffi-dev
 
 WORKDIR /app
 
-# Copy application files
 COPY requirements.txt /app
-COPY ./PEParser.py /app/PEParser.py
+COPY peparser_lib.py /app/peparser_lib.py
+COPY karton-mwdb-peparser.py /app/karton-mwdb-peparser.py
 
-# Create virtual environment and install dependencies
 RUN python3 -m venv /app/venv && \
     /app/venv/bin/pip install --upgrade pip && \
-    /app/venv/bin/pip --no-cache-dir install -r /app/requirements.txt
+    /app/venv/bin/pip install -r /app/requirements.txt
 
-# Ensure virtual environment is in PATH
 ENV PATH="/app/venv/bin:$PATH"
 
-# Run the application
-CMD [ "/app/venv/bin/python", "/app/PEParser.py" ]
-
+CMD ["/app/venv/bin/python", "/app/karton-mwdb-peparser.py"]
