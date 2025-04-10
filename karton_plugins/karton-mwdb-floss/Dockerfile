@@ -13,27 +13,30 @@
 # CMD [ "python" , "karton-mwdb-flare-floss.py" ]
 
 
-FROM python:3.12-alpine
+FROM python:3.12-slim
+
 LABEL maintainer="0xalamri@layer0.xyz"
 
-# Install necessary packages (curl, unzip)
-RUN apk add --no-cache curl unzip
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y curl unzip && \
+    apt-get clean
 
 WORKDIR /app
 
-# Download and extract FLOSS
+# Download and install FLOSS
 RUN curl -L -o floss.zip https://github.com/mandiant/flare-floss/releases/download/v3.1.1/floss-v3.1.1-linux.zip && \
     unzip floss.zip -d ./floss && \
-    mv ./floss/floss /usr/bin/ && \
+    mv ./floss/floss /usr/bin/floss && \
+    chmod +x /usr/bin/floss && \
     rm -rf floss.zip ./floss
 
-# Copy and install dependencies
+# Copy and install Python dependencies
 COPY requirements.txt /app
 RUN python3 -m venv /app/venv && \
-    /app/venv/bin/pip --no-cache-dir install -r /app/requirements.txt
+    /app/venv/bin/pip install --no-cache-dir -r /app/requirements.txt
 
 # Copy script
 COPY ./karton-mwdb-flare-floss.py /app/karton-mwdb-flare-floss.py
 
-# Run the script
 CMD [ "/app/venv/bin/python", "/app/karton-mwdb-flare-floss.py" ]

@@ -15,4 +15,5 @@ COPY ./requirements.txt ./requirements.txt
 COPY ./karton-mwdb-strings.py ./karton-mwdb-strings.py
 RUN python3 -m venv /app/venv
 RUN /app/venv/bin/pip --no-cache-dir install -r /app/requirements.txt
-CMD [ "python" , "karton-mwdb-strings.py" ]
+CMD [ "/app/venv/bin/python", "karton-mwdb-strings.py" ]
+
