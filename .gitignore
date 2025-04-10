@@ -137,6 +137,6 @@ postgres-vars.env
 #./TheZoo_volume/
 #./TheZoo_volume/karton/karton.ini 
 #./TheZoo_volume/karton/mwdb.ini
-#./TheZoo_volume/samples
+./TheZoo_volume/samples
 #./karton_plugins/karton-dashboard/requirements.txt
 #./karton_plugins/karton-mwdb-reporter/requirements.txt
