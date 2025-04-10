@@ -1,3 +1,2 @@
 mwdblib>=4.0.0
-karton-core>=4.2.0,<5.0.0
-#flare-floss
+karton-core==5.3.0
