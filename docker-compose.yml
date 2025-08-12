@@ -6,6 +6,28 @@
 # karton-dashboard          8000                TBD
 
 services:
+#################################
+#  MinIO bucket initialization  #
+#################################
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    env_file:
+      - mwdb-vars.env
+    entrypoint: >
+      /bin/sh -c "
+      echo 'Setting up MinIO buckets for TheZoo...';
+      mc alias set myminio http://minio:9000 $${MINIO_ACCESS_KEY} $${MINIO_SECRET_KEY};
+      mc mb myminio/mwdb-files --ignore-existing;
+      mc mb myminio/karton --ignore-existing;
+      echo 'Buckets created successfully:';
+      mc ls myminio/;
+      echo 'Setup complete - MWDB files will be stored separately from Karton tasks';
+      "
+    restart: "no"
+
 #############################
 #  Minio Storage container #
 ############################
@@ -185,20 +207,6 @@ services:
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
-# #################################
-# # karton yaraMatcher container #
-# ################################
-#   karton-mwdb-yara_matcher:
-#     build:
-#       context: ./karton_plugins/karton-mwdb-yara
-#       dockerfile: Dockerfile 
-#     depends_on:
-#       - redis
-#       - minio
-#     volumes:
-#       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
-#       - "./TheZoo_volume/yara_rules:/app/service/"
-
 ################################
 #  karton pe parser container    #
 ################################
@@ -215,13 +223,26 @@ services:
  #################################
 #  karton retdec container    #
 ################################
-  karton-retdec-decompiler:
-    build:
-      context: ./karton_plugins/karton-retdec-decompiler
-      dockerfile: Dockerfile 
-    depends_on:
-      - redis
-      - minio
-    volumes:
-      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
+#  karton-retdec-decompiler:
+#    build:
+#      context: ./karton_plugins/karton-retdec-decompiler
+#      dockerfile: Dockerfile 
+#    depends_on:
+#      - redis
+#      - minio
+#    volumes:
+#      - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
+# #################################
+# # karton yaraMatcher container #
+# ################################
+#   karton-mwdb-yara_matcher:
+#     build:
+#       context: ./karton_plugins/karton-mwdb-yara
+#       dockerfile: Dockerfile 
+#     depends_on:
+#       - redis
+#       - minio
+#     volumes:
+#       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
+#       - "./TheZoo_volume/yara_rules:/app/service/"
