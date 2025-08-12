@@ -1,0 +1,10 @@
+# Karton Configuration Template
+# Copy this file to TheZoo_volume/karton/karton.ini and modify as needed
+
+[core]
+bucket = karton
+redis_url = redis://redis:6379/0
+identity = karton
+
+# Add your karton configuration here
+# This template ensures the bucket separation fix is documented
