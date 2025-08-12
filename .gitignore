@@ -129,14 +129,76 @@ dmypy.json
 .pyre/
 
 
-### TheZoo stuff
+### TheZoo Platform Specific
+# Environment files (contain sensitive data)
 mwdb-vars.env
 postgres-vars.env
-#./TheZoo_volume/*
-#TheZoo_volume
-#./TheZoo_volume/
-#./TheZoo_volume/karton/karton.ini 
-#./TheZoo_volume/karton/mwdb.ini
-./TheZoo_volume/samples
-#./karton_plugins/karton-dashboard/requirements.txt
-#./karton_plugins/karton-mwdb-reporter/requirements.txt
+.env
+.env.local
+.env.production
+
+# Volume directories (contain runtime data)
+TheZoo_volume/
+./TheZoo_volume/
+./TheZoo_volume/samples/
+./TheZoo_volume/mwdb/
+
+# Karton configuration (use templates instead)
+TheZoo_volume/karton/
+
+# Docker and container files
+.dockerignore
+docker-compose.override.yml
+docker-compose.prod.yml
+
+# Logs and temporary files
+*.log
+logs/
+temp/
+tmp/
+*.tmp
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Test and coverage files
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+
+# Node.js (if any web components)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python virtual environments
+venv/
+env/
+.venv/
+.env/
+ENV/
+
+# Local development files
+local_settings.py
+settings_local.py
