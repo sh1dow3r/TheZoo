@@ -120,8 +120,10 @@ services:
       context: ./karton
       dockerfile: Dockerfile
     depends_on:
-      - redis
-      - minio
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
     entrypoint: karton-system
@@ -135,8 +137,10 @@ services:
       context: karton_plugins/karton-classifier
       dockerfile: Dockerfile 
     depends_on:
-      - redis
-      - minio
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
@@ -148,8 +152,10 @@ services:
       context: karton_plugins/karton-dashboard
       dockerfile: Dockerfile 
     depends_on:
-      - redis
-      - minio
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
     ports:
@@ -163,8 +169,10 @@ services:
       context: ./karton_plugins/karton-mwdb-reporter
       dockerfile: Dockerfile 
     depends_on:
-      - redis
-      - minio
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
@@ -176,8 +184,10 @@ services:
       context: ./karton_plugins/karton-mwdb-strings
       dockerfile: Dockerfile 
     depends_on:
-      - redis
-      - minio
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
@@ -189,8 +199,10 @@ services:
       context: ./karton_plugins/karton-mwdb-floss
       dockerfile: Dockerfile 
     depends_on:
-      - redis
-      - minio
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
@@ -202,8 +214,10 @@ services:
       context: ./karton_plugins/karton-mwdb-capa
       dockerfile: Dockerfile 
     depends_on:
-      - redis
-      - minio
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
 
@@ -215,8 +229,10 @@ services:
       context: ./karton_plugins/karton-mwdb-peparser
       dockerfile: Dockerfile
     depends_on:
-      - redis
-      - minio
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     volumes:
       - "./TheZoo_volume/karton/karton.ini:/etc/karton/karton.ini"
       

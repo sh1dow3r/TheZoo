@@ -92,16 +92,23 @@ def setup_ini_file(ini_file, section, key, val):
 def generate_karton_config(output_file, admin_password, minio_access_key, minio_secret_key):
     """Generate karton.ini from template with proper bucket separation"""
     config_content = f"""[core]
-bucket = karton
-redis_url = redis://redis:6379/0
-identity = karton
+ bucket = karton
+ redis_url = redis://redis:6379/0
+ identity = karton
 
-[mwdb]
+[redis]
+host = redis
+port = 6379
+db = 0
+
+ [mwdb]
 password = {admin_password}
 
-[minio]
+[s3]
+address = http://minio:9000
 access_key = {minio_access_key}
 secret_key = {minio_secret_key}
+bucket = karton
 """
     
     with open(output_file, 'w') as f:
@@ -188,6 +195,18 @@ def wait_for_service(url, service_name, timeout=120):
     return False
 
 
+def ensure_submodules():
+    """Ensure git submodules are initialized and updated"""
+    try:
+        subprocess.run(["git", "submodule", "update", "--init", "--recursive"],
+                       check=True, capture_output=True)
+        print_status("✅ Git submodules initialized", "success")
+        return True
+    except subprocess.CalledProcessError as e:
+        print_status(f"⚠️  Failed to init submodules: {e}", "warning")
+        return False
+
+
 def run_docker_compose(action="up"):
     """Run docker compose commands"""
     try:
@@ -206,64 +225,15 @@ def run_docker_compose(action="up"):
 
 
 def create_minio_buckets():
-    """Create MinIO buckets using docker run"""
+    """Create MinIO buckets using docker compose one-shot init service"""
     print_status("🪣 Setting up MinIO buckets...", "info")
-    
-    # Read credentials
-    if not os.path.exists("mwdb-vars.env"):
-        print_status("❌ mwdb-vars.env not found!", "error")
-        return False
-        
-    # Parse environment file
-    env_vars = {}
-    with open("mwdb-vars.env", "r") as f:
-        for line in f:
-            if "=" in line and not line.strip().startswith("#"):
-                key, value = line.strip().split("=", 1)
-                env_vars[key] = value
-    
-    access_key = env_vars.get("MINIO_ACCESS_KEY")
-    secret_key = env_vars.get("MINIO_SECRET_KEY")
-    
-    if not access_key or not secret_key:
-        print_status("❌ MinIO credentials not found in mwdb-vars.env", "error")
-        return False
-    
-    # Get current directory name for network
-    network_name = f"{os.path.basename(os.getcwd())}_default"
-    
     try:
-        # Create mwdb-files bucket
-        subprocess.run([
-            "docker", "run", "--rm", f"--network={network_name}",
-            "-e", f"MC_HOST_myminio=http://{access_key}:{secret_key}@minio:9000",
-            "minio/mc:latest",
-            "mb", "myminio/mwdb-files", "--ignore-existing"
-        ], check=True, capture_output=True)
-        
-        # Ensure karton bucket exists
-        subprocess.run([
-            "docker", "run", "--rm", f"--network={network_name}",
-            "-e", f"MC_HOST_myminio=http://{access_key}:{secret_key}@minio:9000",
-            "minio/mc:latest", 
-            "mb", "myminio/karton", "--ignore-existing"
-        ], check=True, capture_output=True)
-        
-        # List buckets to verify
-        result = subprocess.run([
-            "docker", "run", "--rm", f"--network={network_name}",
-            "-e", f"MC_HOST_myminio=http://{access_key}:{secret_key}@minio:9000",
-            "minio/mc:latest",
-            "ls", "myminio/"
-        ], capture_output=True, text=True, check=True)
-        
-        print_status("📋 Current buckets:", "info")
-        print(result.stdout)
+        # Run the one-shot init container defined in docker-compose
+        subprocess.run(["docker", "compose", "up", "-d", "minio-init"], check=True, capture_output=True)
         print_status("✅ Bucket separation configured successfully!", "success")
         return True
-        
     except subprocess.CalledProcessError as e:
-        print_status(f"❌ Failed to create buckets: {e}", "error")
+        print_status(f"❌ Failed to create buckets (minio-init): {e}", "error")
         return False
 
 
@@ -300,6 +270,65 @@ def test_api():
             
     except Exception as e:
         print_status(f"❌ API test failed: {e}", "error")
+        return False
+
+
+def smoke_test_upload_sample():
+    """Upload a small random sample to verify end-to-end flow"""
+    print_status("🧪 Uploading a test sample...", "info")
+    # Read admin password
+    env_vars = {}
+    with open("mwdb-vars.env", "r") as f:
+        for line in f:
+            if "=" in line and not line.strip().startswith("#"):
+                key, value = line.strip().split("=", 1)
+                env_vars[key] = value
+
+    try:
+        import json, tempfile, os
+        data = json.dumps({"login": "admin", "password": env_vars["MWDB_ADMIN_PASSWORD"]}).encode()
+        req = urllib.request.Request("http://localhost:8080/api/auth/login",
+                                     data=data,
+                                     headers={"Content-Type": "application/json"})
+        response = urllib.request.urlopen(req)
+        auth = json.loads(response.read().decode())
+        token = auth.get("token")
+        if not token:
+            print_status("❌ Missing token in auth response", "error")
+            return False
+
+        # Create a small random file and upload it
+        os.makedirs("TheZoo_volume/samples", exist_ok=True)
+        tmp_file = os.path.join("TheZoo_volume/samples", "smoke.bin")
+        with open(tmp_file, "wb") as f:
+            f.write(os.urandom(2048))
+
+        # Build multipart request manually
+        boundary = "----TheZooBoundary"
+        body = []
+        body.append(f"--{boundary}\r\n".encode())
+        body.append(b"Content-Disposition: form-data; name=\"file\"; filename=\"smoke.bin\"\r\n")
+        body.append(b"Content-Type: application/octet-stream\r\n\r\n")
+        body.append(open(tmp_file, "rb").read())
+        body.append(f"\r\n--{boundary}--\r\n".encode())
+        body_bytes = b"".join(body)
+
+        req = urllib.request.Request(
+            "http://localhost:8080/api/file",
+            data=body_bytes,
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": f"multipart/form-data; boundary={boundary}",
+            },
+        )
+        resp = urllib.request.urlopen(req)
+        if resp.getcode() == 200:
+            print_status("✅ Test sample uploaded", "success")
+            return True
+        print_status(f"⚠️  Unexpected response: {resp.status}", "warning")
+        return False
+    except Exception as e:
+        print_status(f"⚠️  Smoke test upload failed: {e}", "warning")
         return False
 
 
@@ -362,6 +391,10 @@ def full_setup():
         print_status("❌ Docker Compose is not available. Please install Docker Compose.", "error")
         sys.exit(1)
     
+    # Step 0: Ensure submodules
+    print_status("📦 Step 0: Initializing submodules...", "warning")
+    ensure_submodules()
+
     # Step 1: Generate configuration
     print_status("🔧 Step 1: Generating configuration...", "warning")
     if os.path.exists("mwdb-vars.env"):
@@ -393,6 +426,8 @@ def full_setup():
     print_status("\n🧪 Step 5: Testing setup...", "warning")
     if not test_api():
         print_status("⚠️  API test failed, but platform may still be functional", "warning")
+    else:
+        smoke_test_upload_sample()
     
     # Final status
     print_final_status()

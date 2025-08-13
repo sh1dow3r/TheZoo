@@ -5,16 +5,16 @@ Malware hosting platform with automated analysis
 
 **One-command setup with file persistence fix:**
 ```sh
-git clone https://github.com/sh1dow3r/TheZoo --recursive
+git clone https://github.com/sh1dow3r/TheZoo
 cd TheZoo
 python3 main.py --setup
 ```
 
 ## 📋 Manual Setup
 
-Clone the repo with its submodules:
+Clone the repo (submodules are auto-initialized by the setup script):
 ```sh
-git clone https://github.com/sh1dow3r/TheZoo --recursive
+git clone https://github.com/sh1dow3r/TheZoo
 cd TheZoo
 ```
 
@@ -64,6 +64,23 @@ See [`BUCKET_SEPARATION_FIX.md`](BUCKET_SEPARATION_FIX.md) for technical details
 - **MinIO Console**: http://localhost:9001
 
 **Default credentials**: `admin` / (see generated password in `mwdb-vars.env`)
+
+### 🧪 Smoke test
+
+After setup, a smoke test uploads a small sample automatically. You can also upload via MWDB UI or:
+```sh
+python3 - <<'PY'
+import requests, os
+s=requests.Session()
+env=dict(l.split('=',1) for l in open('mwdb-vars.env') if '=' in l and not l.startswith('#'))
+t=s.post('http://localhost:8080/api/auth/login',json={'login':'admin','password':env['MWDB_ADMIN_PASSWORD']}).json()['token']
+H={'Authorization':'Bearer '+t}
+os.makedirs('TheZoo_volume/samples',exist_ok=True)
+open('TheZoo_volume/samples/test.bin','wb').write(os.urandom(2048))
+with open('TheZoo_volume/samples/test.bin','rb') as f:
+    print(s.post('http://localhost:8080/api/file',headers=H,files={'file':('test.bin',f,'application/octet-stream')}).text)
+PY
+```
 
 # Blog Post
 
